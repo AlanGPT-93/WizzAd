@@ -1,7 +1,7 @@
 import pandas as pd
 
 location = "C:/Users/Alan.Garcia/Downloads"
-filename = "WizzAd_Creatives_130322.xlsx"
+filename = "WizzAd_200322.xlsx"
 
 wizzad_data = pd.read_excel(f"{location}/{filename}", skipfooter=5, skiprows= 11)
 
