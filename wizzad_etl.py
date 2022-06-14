@@ -12,7 +12,7 @@ last_sunday_date = last_sunday_date.strftime("%d%m%y")
 ## Reading File
 location = "C:/Users/Alan.Garcia/Downloads"
 filename = f"WizzAd_Competitive_{last_sunday_date}.xlsx"
-wizzad_data = pd.read_excel(f"{location}/{filename}", skipfooter = 5, skiprows = 11)
+wizzad_data = pd.read_excel(f"{location}/{filename}", skipfooter = 5, skiprows = 11, sheet_name = 'Untitled - Telecom Advertisers ')
 
 ### Transforming Data
 ## Clasifying Brand into Line of Business
@@ -24,10 +24,10 @@ for new_lob, old_lob in line_of_business.items():
 
 ## Deleting Unnecessary Columns
 # cols_index = [1,2]
-cols_index = list(range(1,12)) #extend(list(range(1,12)))
-wizzad_data = wizzad_data.iloc[:,cols_index]
+#cols_index = list(range(1,12)) #extend(list(range(1,12)))
+wizzad_data = wizzad_data.iloc[:,1:]
 
-## Renaming
+## Renaming Columns
 # This way of renaming columns is unnecessary.
 # old_columns_names = list(wizzad_data.columns)
 # new_columns_names = "Advertiser Brand Creative_Description Media_Type Media_Owner Date Month Week Spend Category".split(" ")
@@ -45,25 +45,41 @@ for old_adv, new_adv in advertisers.items():
     aux_bool = wizzad_data["Advertiser"].isin([old_adv])
     wizzad_data.loc[aux_bool, "Category"] = new_adv
 
-## Duplicating Brands in other LoB
+## Duplicating by Brand_Context_Code in other LoB
 home_duplicaded = ["DIRECTV", "DISH PUERTO RICO", "LIBERTY CABLEVISION", "LIBERTY CABLEVISION OOH"]
-mobility_duplicaded = ["AMERICA MOVIL B OOH", "CLARO WIRELESS B", "LIBERTY CABLEVISION", "LIBERTY MOBILE OOH", "LIBERTY MOBILITY",
-"T MOBILE C", "T MOBILE C: APP", "T MOBILE C: INSTITUTIONAL OOH"]
+mobility_duplicaded = ["CLARO MOBILITY", "LIBERTY MOBILE OOH", "LIBERTY MOBILITY",
+"T MOBILE C", "T MOBILE C: APP", "T MOBILE C: INSTITUTIONAL OOH", "T MOBILE: ROAMING"]
 
 # Adding a new column
 wizzad_data["Duplicated"] = "No"
 duplicated = {"Home": home_duplicaded, "Mobility": mobility_duplicaded}
 
 # concat duplicated data with wizzad_data
-for lob, brand in duplicated.items():
-    aux_bool = wizzad_data["Brand_Context_Code"].isin(brand)
-    aux_data = wizzad_data.loc[aux_bool, :] 
-    aux_data.loc[aux_bool, "Duplicated"] = "Yes"
-    aux_data.loc[aux_bool, "Category"] = lob
+for lob, brand_context in duplicated.items():
+    aux_bool = wizzad_data["Brand_Context_Code"].isin(brand_context)
+    aux_data = wizzad_data.copy().loc[aux_bool, :]
+    aux_data["Duplicated"] = "Yes"
+    aux_data["Category"] = lob
     wizzad_data = pd.concat([wizzad_data, aux_data], ignore_index=True)
+    # aux_data.shape
+    # len(aux_bool)
+    # aux_data.describe(include="object")
+    # aux_data.loc[aux_bool, "Duplicated"] = "Yes"
+    # aux_data.loc[aux_bool, "Category"] = lob
     
 #wizzad_data.info()
 wizzad_data.to_csv("C:/Users/Alan.Garcia/OneDrive - OneWorkplace/new_wizzad.csv", index = False)
+
+Duplicated_Creatives = wizzad_data["Media_Type"].isin(["Local TV"])
+Duplicated_Creatives = wizzad_data.copy().loc[Duplicated_Creatives,:].groupby(["Advertiser","Brand_Context_Code", 
+"Brand", "Creative_Description", "Category","Duplicated"]).agg(["count"])
+#print(Duplicated_Creatives.info())
+Duplicated_Creatives = Duplicated_Creatives.reset_index().iloc[:,:6]
+Duplicated_Creatives.columns = ["Advertiser_dos", "Brand_Context_Code", "Brand_Change", "Creative",
+"Line_of_Business", "Duplicated"]
+#print(Duplicated_Creatives.info())
+Duplicated_Creatives.to_csv("C:/Users/Alan.Garcia/OneDrive - OneWorkplace/Duplicated_Creatives.csv",
+index = False)
 
 
 # institutional = ["CLARO: INSTITUTIONAL", "LIBERTY: INSTITUTIONAL", # eran residence
