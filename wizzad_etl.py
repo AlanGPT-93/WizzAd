@@ -92,7 +92,7 @@ Duplicated_Creatives.columns = ["Advertiser_dos", "Brand_Context_Code", "Brand_C
 Duplicated_Creatives["Creatives_Key"] = Duplicated_Creatives["Advertiser_dos"] + "_" + Duplicated_Creatives["Creative"] + "_" + Duplicated_Creatives["Duplicated"]
 
 
-## Storaging new Creatives
+## Storing new Creatives
 
 # It creates a table named creatives_table if not exists.
 database.create_table("""CREATE Table IF NOT EXISTS creatives_table(advertiser_dos text,

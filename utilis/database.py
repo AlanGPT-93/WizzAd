@@ -1,10 +1,10 @@
 """
-Concerned with storing and retrieving books from a list. 
+Concerned with storing and retrieving creatives from a list. 
 """
 
 from .context_manager import DataConnection 
 
-location_db = "C:/Users/Alan.Garcia/OneDrive - OneWorkplace/Documentos/Python/projects/wizzad_data/creatives.db"
+location_db = "C:/Users/Alan.Garcia/OneDrive - OneWorkplace/Documentos/Python/projects/databases/creatives.db"
 
 ## Función que crea una tabla según la query propuesta
 def create_table(query):
