@@ -85,23 +85,38 @@ Duplicated_Creatives.columns = ["Advertiser_dos", "Brand_Context_Code", "Brand_C
 "Line_of_Business", "Duplicated"]
 
 ## Exporting Duplicated_Creatives data
-Duplicated_Creatives.to_csv("C:/Users/Alan.Garcia/OneDrive - OneWorkplace/Duplicated_Creatives.csv",
-index = False)
+#Duplicated_Creatives.to_csv("C:/Users/Alan.Garcia/OneDrive - OneWorkplace/Duplicated_Creatives.csv",
+#index = False)
 
-Duplicated_Creatives["Key"] = Duplicated_Creatives["Advertiser_dos"] + "_" + Duplicated_Creatives["Creative"] + "_" + Duplicated_Creatives["Duplicated"]
-print(Duplicated_Creatives["Key"])
-
-## It creates a table named creatives_table if not exists.
-# database.create_table("""CREATE Table IF NOT EXISTS creatives_table(advertiser_dos text,
-# brand_context_code text, brand_change text,  creative text, line_of_business text, Duplicated text)""")
-
-# nw = database.get_data("select * from creatives_table")
-# nw = pd.DataFrame(nw)
-# print(nw.head() )
+# Adding a new column for getting a creative key.
+Duplicated_Creatives["Creatives_Key"] = Duplicated_Creatives["Advertiser_dos"] + "_" + Duplicated_Creatives["Creative"] + "_" + Duplicated_Creatives["Duplicated"]
 
 
-#database.add_data("INSERT INTO creatives_table values(?,?,?,?,?,?)", Duplicated_Creatives)
+## Storaging new Creatives
 
+# It creates a table named creatives_table if not exists.
+database.create_table("""CREATE Table IF NOT EXISTS creatives_table(advertiser_dos text,
+brand_context_code text, brand_change text,  creative text, line_of_business text,
+Duplicated text, creatives_key tex pk)""")
+
+# Reading creatives_key from creatives_table
+creatives_data = database.get_data("select creatives_key from creatives_table")
+creatives_data = pd.DataFrame(creatives_data, columns = ['Creatives_Key'])
+
+# Filling out just for once
+# Creatives_all = pd.read_csv("C:/Users/Alan.Garcia/OneDrive - OneWorkplace/Creatives.csv")
+# aux_bool = Creatives_all["Creatives_Key"].isin(creatives_data["Creatives_Key"]  )
+# Creatives_all = Creatives_all.loc[~ aux_bool, :]
+# print(Creatives_all.head() )
+# database.add_data("INSERT INTO creatives_table values(?,?,?,?,?,?,?)", Creatives_all)
+
+## Finding out new creatives
+aux_bool = Duplicated_Creatives["Creatives_Key"].isin(creatives_data["Creatives_Key"]  )
+Duplicated_Creatives = Duplicated_Creatives.loc[~ aux_bool, :]
+
+print(Duplicated_Creatives.info())
+# Inserting new Creatives into creatives_table
+#database.add_data("INSERT INTO creatives_table values(?,?,?,?,?,?,?)", Duplicated_Creatives)
 
 
 ################################ Deprecated #################################
