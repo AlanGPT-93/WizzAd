@@ -1,6 +1,7 @@
 import pandas as pd
 from datetime import date, datetime, timedelta
 import re
+from utilis import database
 
 ### Extracting Data
 
@@ -67,21 +68,43 @@ for lob, brand_context in duplicated.items():
     # aux_data.loc[aux_bool, "Duplicated"] = "Yes"
     # aux_data.loc[aux_bool, "Category"] = lob
     
-#wizzad_data.info()
+## Exporting WizzAd data
 wizzad_data.to_csv("C:/Users/Alan.Garcia/OneDrive - OneWorkplace/new_wizzad.csv", index = False)
 
+
+## Finding out the list of distinct creatives in Local TV
+
+# Filtering by 'Local TV' and grouping by several fields.
 Duplicated_Creatives = wizzad_data["Media_Type"].isin(["Local TV"])
 Duplicated_Creatives = wizzad_data.copy().loc[Duplicated_Creatives,:].groupby(["Advertiser","Brand_Context_Code", 
 "Brand", "Creative_Description", "Category","Duplicated"]).agg(["count"])
-#print(Duplicated_Creatives.info())
+
+# After counting all distinct groups we only need the dimensions.
 Duplicated_Creatives = Duplicated_Creatives.reset_index().iloc[:,:6]
 Duplicated_Creatives.columns = ["Advertiser_dos", "Brand_Context_Code", "Brand_Change", "Creative",
 "Line_of_Business", "Duplicated"]
-#print(Duplicated_Creatives.info())
+
+## Exporting Duplicated_Creatives data
 Duplicated_Creatives.to_csv("C:/Users/Alan.Garcia/OneDrive - OneWorkplace/Duplicated_Creatives.csv",
 index = False)
 
+Duplicated_Creatives["Key"] = Duplicated_Creatives["Advertiser_dos"] + "_" + Duplicated_Creatives["Creative"] + "_" + Duplicated_Creatives["Duplicated"]
+print(Duplicated_Creatives["Key"])
 
+## It creates a table named creatives_table if not exists.
+# database.create_table("""CREATE Table IF NOT EXISTS creatives_table(advertiser_dos text,
+# brand_context_code text, brand_change text,  creative text, line_of_business text, Duplicated text)""")
+
+# nw = database.get_data("select * from creatives_table")
+# nw = pd.DataFrame(nw)
+# print(nw.head() )
+
+
+#database.add_data("INSERT INTO creatives_table values(?,?,?,?,?,?)", Duplicated_Creatives)
+
+
+
+################################ Deprecated #################################
 # institutional = ["CLARO: INSTITUTIONAL", "LIBERTY: INSTITUTIONAL", # eran residence
 #                      'T-MOBILE: INSTITUTIONAL',"AT&T: INSTITUTIONAL",'AT&T: CO BRAND', # eran mobility
 #                      'LIBERTY MOBILE']
