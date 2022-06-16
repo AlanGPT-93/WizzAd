@@ -114,9 +114,13 @@ creatives_data = pd.DataFrame(creatives_data, columns = ['Creatives_Key'])
 aux_bool = Duplicated_Creatives["Creatives_Key"].isin(creatives_data["Creatives_Key"]  )
 Duplicated_Creatives = Duplicated_Creatives.loc[~ aux_bool, :]
 
-print(Duplicated_Creatives.info())
 # Inserting new Creatives into creatives_table
-#database.add_data("INSERT INTO creatives_table values(?,?,?,?,?,?,?)", Duplicated_Creatives)
+if Duplicated_Creatives.shape[0] != 0:
+    database.add_data("INSERT INTO creatives_table values(?,?,?,?,?,?,?)", Duplicated_Creatives)
+    print("New Creatives Added")
+else:
+    print("All it's done")
+
 
 
 ################################ Deprecated #################################
