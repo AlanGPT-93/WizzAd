@@ -2,6 +2,7 @@ import pandas as pd
 from datetime import date, datetime, timedelta
 import re
 from utilis import database
+import openpyxl
 
 ### Extracting Data
 
@@ -13,7 +14,12 @@ last_sunday_date = last_sunday_date.strftime("%d%m%y")
 ## Reading File
 location = "C:/Users/Alan.Garcia/Downloads"
 filename = f"WizzAd_Competitive_{last_sunday_date}.xlsx"
-wizzad_data = pd.read_excel(f"{location}/{filename}", skipfooter = 5, skiprows = 11, sheet_name = 'Untitled - Telecom Advertisers ')
+
+# wizzad_data_sheets = openpyxl.load_workbook(f"{location}/{filename}")
+# wizzad_data_sheets.sheetnames
+
+wizzad_data = pd.read_excel(f"{location}/{filename}", skipfooter = 5, skiprows = 11, 
+                            sheet_name = 'Untitled - Telecom Advertisers ')
 
 ### Transforming Data
 ## Clasifying Brand into Line of Business
@@ -36,7 +42,7 @@ wizzad_data = wizzad_data.iloc[:,1:]
 # wizzad_data.rename(columns = new_columns_names, inplace = True)
 
 # Ranaming by using REGEX due to we need Brand_Context_Code column.
-new_columns_names_fuction = lambda column: re.sub(" ", "_", re.sub(" [Year\d]+.*", "", column) )
+new_columns_names_fuction = lambda column: re.sub(" ", "_", re.sub(" [Year\d/(].*", "", column) )
 new_columns_names = list(map(new_columns_names_fuction, wizzad_data.columns))
 wizzad_data.columns = new_columns_names
 
