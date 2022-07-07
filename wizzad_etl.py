@@ -22,6 +22,7 @@ wizzad_data = pd.read_excel(f"{location}/{filename}", skipfooter = 5, skiprows =
                             sheet_name = 'Untitled - Telecom Advertisers ')
 
 ### Transforming Data
+
 ## Clasifying Brand into Line of Business
 line_of_business = {"Mobility": "MOBILE", "Institutional": "BRAND", "Business": "BUSINESS", "Home": "HOME"}
 
@@ -35,6 +36,8 @@ for new_lob, old_lob in line_of_business.items():
 wizzad_data = wizzad_data.iloc[:,1:]
 
 ## Renaming Columns
+
+################################ Deprecated #################################
 # This way of renaming columns is unnecessary.
 # old_columns_names = list(wizzad_data.columns)
 # new_columns_names = "Advertiser Brand Creative_Description Media_Type Media_Owner Date Month Week Spend Category".split(" ")
@@ -51,6 +54,20 @@ advertisers = {"DISH NETWORK": "DISH", "NEPTUNO NETWORKS": "NEPTUNO", "BOOST MOB
 for old_adv, new_adv in advertisers.items():
     aux_bool = wizzad_data["Advertiser"].isin([old_adv])
     wizzad_data.loc[aux_bool, "Category"] = new_adv
+
+
+## Exporting WizzAd Print & Radio Data
+"""" This Data is gonna work for getting Print & Radio GRPs by automating PrimeLingo  & TabScan"""
+
+# Filtering by 'Print' & 'Radio' & Taking needed columns
+is_print_radio = wizzad_data["Media_Type"].isin(["Print","Radio"])
+wizzad_print_radio_data = wizzad_data.copy().loc[ is_print_radio, ["Advertiser", "Media_Type",
+"Media_Owner", "Date", "Spend", "Category"] ]
+
+# Exporting Data
+wizzad_print_radio_data.to_csv("C:/Users/Alan.Garcia/OneDrive - OneWorkplace/wizzad_print_radio.csv",
+                            index = False)
+
 
 ## Duplicating by Brand_Context_Code in other LoB
 home_duplicaded = ["DIRECTV", "DISH PUERTO RICO", "LIBERTY CABLEVISION", "LIBERTY CABLEVISION OOH"]
@@ -74,7 +91,7 @@ for lob, brand_context in duplicated.items():
     # aux_data.loc[aux_bool, "Duplicated"] = "Yes"
     # aux_data.loc[aux_bool, "Category"] = lob
     
-## Exporting WizzAd data
+## Exporting WizzAd Data
 wizzad_data.to_csv("C:/Users/Alan.Garcia/OneDrive - OneWorkplace/new_wizzad.csv", index = False)
 
 
