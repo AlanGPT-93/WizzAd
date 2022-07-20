@@ -19,7 +19,7 @@ filename = f"WizzAd_Competitive_{last_sunday_date}.xlsx"
 # wizzad_data_sheets.sheetnames
 
 wizzad_data = pd.read_excel(f"{location}/{filename}", skipfooter = 5, skiprows = 11, 
-                            sheet_name = 'Untitled - Telecom Advertisers ')
+                            sheet_name = 'Telecom Advertisers')
 
 ### Transforming Data
 
